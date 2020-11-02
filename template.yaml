@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    Stack to deploy send SMS Lambda and gateway
+
+Globals:
+    Function:
+        Timeout: 3
+
+Resources:
+    RestApiGateway:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: Prod
+            Name: tulip-to-sms-api
+             
+    SMSFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            FunctionName: tulip-to-sms
+            Description: Sends an SMS message using SNS
+            CodeUri: tulip_send_sms/
+            Handler: app.lambda_handler
+            Runtime: python3.8
+            Policies:
+            - AmazonSNSFullAccess
+                      
+            Events:
+                PostEvent:
+                    Type: Api
+                    Properties:
+                        Path: /sendsms
+                        Method: get
+                        RestApiId:
+                            Ref: RestApiGateway
+
+Outputs:
+
+   SMSFunction:
+     Description: "Send SMS Lambda Function ARN"
+     Value: !GetAtt SMSFunction.Arn
+
+   SMSFunctionIamRole:
+     Description: "Implicit IAM Role created for Send SMS function"
+     Value: !GetAtt SMSFunctionRole.Arn
