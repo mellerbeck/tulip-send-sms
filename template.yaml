@@ -13,7 +13,7 @@ Resources:
         Properties:
             StageName: Prod
             Name: tulip-to-sms-api
-             
+            EndpointConfiguration: REGIONAL 
     SMSFunction:
         Type: AWS::Serverless::Function
         Properties:
@@ -21,7 +21,7 @@ Resources:
             Description: Sends an SMS message using SNS
             CodeUri: tulip_send_sms/
             Handler: app.lambda_handler
-            Runtime: python3.8
+            Runtime: python3.7
             Policies:
             - AmazonSNSFullAccess
                       
